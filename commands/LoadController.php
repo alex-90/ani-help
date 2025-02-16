@@ -49,7 +49,17 @@ class LoadController extends Controller
         $user->email = 'alex@mail.ru';
         $user->type = 0;
         $user->inactive = 0;
+        $password = '123';
+        $hash = \Yii::$app->getSecurity()->generatePasswordHash($password);
+
+        $user->password = $hash;
+        // $user->auth_key = '';
         $user->created_at = date('Y-m-d H:i:s');
+        $r = $user->validate();
+        
+        // var_dump($user->getErrors());exit;
+        // var_dump($r);exit;
+        
         $user->save();
 
         $item = new Item();
