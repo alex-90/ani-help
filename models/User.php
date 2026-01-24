@@ -92,8 +92,7 @@ class User extends ActiveRecord implements IdentityInterface
         return $this->hasMany(Item::class, ['created_user_id' => 'id']);
     }
 
-
-      /**
+    /**
      * Finds an identity by the given ID.
      *
      * @param string|int $id the ID to be looked for

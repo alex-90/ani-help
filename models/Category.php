@@ -53,4 +53,13 @@ class Category extends \yii\db\ActiveRecord
     {
         return $this->hasMany(Item::class, ['category_id' => 'id']);
     }
+
+    public function beforeValidate()
+    {
+        $this->name = strip_tags($this->name);
+        $this->name = trim($this->name);
+        
+        return parent::beforeValidate();
+    }
+
 }

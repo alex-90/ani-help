@@ -62,4 +62,11 @@ class Document extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Item::class, ['id' => 'item_id']);
     }
+
+    public function beforeValidate()
+    {
+        $this->title = trim(strip_tags($this->title));
+        
+        return parent::beforeValidate();
+    }
 }

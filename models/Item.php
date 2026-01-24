@@ -121,4 +121,12 @@ class Item extends \yii\db\ActiveRecord
     {
         return $this->hasMany(SocialNetworks::class, ['item_id' => 'id']);
     }
+
+    public function beforeValidate()
+    {
+        $this->name = trim(strip_tags($this->name));
+        $this->description = trim(strip_tags($this->description));
+        
+        return parent::beforeValidate();
+    }
 }

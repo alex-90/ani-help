@@ -74,4 +74,11 @@ class Donate extends \yii\db\ActiveRecord
     {
         return $this->hasOne(User::class, ['id' => 'user_id']);
     }
+
+    public function beforeValidate()
+    {
+        $this->comment = trim(strip_tags($this->comment));
+        
+        return parent::beforeValidate();
+    }
 }
