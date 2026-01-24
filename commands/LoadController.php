@@ -47,7 +47,7 @@ class LoadController extends Controller
         $user->iin = '1234567890';
         $user->phone = '+77077777777';
         $user->email = 'alex@mail.ru';
-        $user->type = 0;
+        $user->type = 1;
         $user->inactive = 0;
         $password = '123';
         $hash = \Yii::$app->getSecurity()->generatePasswordHash($password);
@@ -69,14 +69,16 @@ class LoadController extends Controller
         $item->status = 0;
         $item->created_at = date('Y-m-d H:i:s');
         $item->category_id = 1;
-        $item->created_by_id = 1;
-        $item->sum = 1000000;
+        $item->created_user_id = 1;
+        $item->sum_need = 1000000;
+        $item->sum_current = 0;
         $item->save();
 
         $donate = new Donate();
         $donate->user_id = 1;
         $donate->item_id = 1;
         $donate->sum = 1000;
+        $donate->comment = 'sadsf';
         $donate->created_at = date('Y-m-d H:i:s');
         $donate->save();
 
