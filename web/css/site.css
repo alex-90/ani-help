@@ -86,3 +86,8 @@ a.desc:after {
 .form-group {
     margin-bottom: 1rem;
 }
+
+.items .card{
+    /* margin-bottom: 20px;
+    float: left; */
+}
