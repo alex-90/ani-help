@@ -2,6 +2,7 @@
 
 $params = require __DIR__ . '/params.php';
 $db = require __DIR__ . '/db.php';
+$routes = require __DIR__ . '/routes.php';
 
 $config = [
     'id' => 'basic',
@@ -45,8 +46,7 @@ $config = [
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
-            'rules' => [
-            ],
+            'rules' => $routes,
         ],
     ],
     'params' => $params,

@@ -91,3 +91,7 @@ a.desc:after {
     /* margin-bottom: 20px;
     float: left; */
 }
+
+.has-error .help-block {
+    color: red;
+}

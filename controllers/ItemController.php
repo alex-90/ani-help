@@ -41,16 +41,14 @@ class ItemController extends SecureController
     {
         $dataProvider = new ActiveDataProvider([
             'query' => Item::find(),
-            /*
-            'pagination' => [
-                'pageSize' => 50
-            ],
-            'sort' => [
-                'defaultOrder' => [
-                    'id' => SORT_DESC,
-                ]
-            ],
-            */
+            // 'pagination' => [
+            //     'pageSize' => 5
+            // ],
+            // 'sort' => [
+            //     'defaultOrder' => [
+            //         'id' => SORT_DESC,
+            //     ]
+            // ],
         ]);
 
         return $this->render('index', [
@@ -80,6 +78,13 @@ class ItemController extends SecureController
     {
         $model = new Item();
 
+        $model->load($this->request->post());
+        
+        $model->created_user_id = \Yii::$app->user->id;
+        $model->created_at = date('Y-m-d H:i:s');
+        $model->sum_current = 0;
+        // $model->validate();
+        
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
                 return $this->redirect(['view', 'id' => $model->id]);

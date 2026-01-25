@@ -1,5 +1,8 @@
 <?php
 
+use  yii\helpers\Html;
+use yii\helpers\Url;
+
 /** @var yii\web\View $this */
 
 $this->title = 'My Yii Application 1';
@@ -7,63 +10,21 @@ $this->title = 'My Yii Application 1';
 <div class="site-index">
 
 
-    <div class="items1 row row-cols-1 row-cols-md-4 g-4">
-        <div class="col">
-            <div class="card" style="width: 18rem;">
-                <img src="https://placehold.co/256x140" class="card-img-top" alt="...">
-                <div class="card-body">
-                    <h5 class="card-title">Card title</h5>
-                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card’s content.</p>
-                    <a href="#" class="btn btn-primary">Go somewhere</a>
+    <div class="items1 row row-cols-1 row-cols-md-4 g-4 m-0 p-1">
+
+    <?php //dd ($dataProvider); ?>
+        <?php foreach ($dataProvider->getModels() as $item): ?>
+            <div class="col">
+                <div class="card" style="width: 18rem;">
+                    <img src="https://placehold.co/256x140" class="card-img-top" alt="...">
+                    <div class="card-body">
+                        <h5 class="card-title"><?= htmlspecialchars($item->name) ?></h5>
+                        <p class="card-text"><?= htmlspecialchars($item->description) ?></p>
+                        <?= Html::a('Show', Url::to(['site/show', 'id' => $item->id]), ['class' => 'btn btn-primary']) ?>
+                    </div>
                 </div>
             </div>
-        </div>
-
-       <div class="col">
-            <div class="card" style="width: 18rem;">
-                <img src="https://placehold.co/256x140" class="card-img-top" alt="...">
-                <div class="card-body">
-                    <h5 class="card-title">Card title</h5>
-                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card’s content.</p>
-                    <a href="#" class="btn btn-primary">Go somewhere</a>
-                </div>
-            </div>
-        </div>
-
-        <div class="col">
-            <div class="card" style="width: 18rem;">
-                <img src="https://placehold.co/256x140" class="card-img-top" alt="...">
-                <div class="card-body">
-                    <h5 class="card-title">Card title</h5>
-                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card’s content.</p>
-                    <a href="#" class="btn btn-primary">Go somewhere</a>
-                </div>
-            </div>
-        </div>
-
-        <div class="col">
-            <div class="card" style="width: 18rem;">
-                <img src="https://placehold.co/256x140" class="card-img-top" alt="...">
-                <div class="card-body">
-                    <h5 class="card-title">Card title</h5>
-                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card’s content.</p>
-                    <a href="#" class="btn btn-primary">Go somewhere</a>
-                </div>
-            </div>
-        </div>
-
-
-                <div class="col">
-            <div class="card" style="width: 18rem;">
-                <img src="https://placehold.co/256x140" class="card-img-top" alt="...">
-                <div class="card-body">
-                    <h5 class="card-title">Card title</h5>
-                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card’s content.</p>
-                    <a href="#" class="btn btn-primary">Go somewhere</a>
-                </div>
-            </div>
-        </div>
-
+        <?php endforeach; ?>
     </div>
 
     <div class="body-content">
