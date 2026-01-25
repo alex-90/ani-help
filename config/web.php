@@ -6,6 +6,7 @@ $routes = require __DIR__ . '/routes.php';
 
 $config = [
     'id' => 'basic',
+    'name' => 'My Application',
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
     'aliases' => [
