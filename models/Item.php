@@ -129,4 +129,9 @@ class Item extends \yii\db\ActiveRecord
         
         return parent::beforeValidate();
     }
+
+    public static function formatSum($sum)
+    {
+        return number_format($sum, 2, '.', ' ');
+    }
 }

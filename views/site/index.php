@@ -2,6 +2,7 @@
 
 use  yii\helpers\Html;
 use yii\helpers\Url;
+use app\models\Item;
 
 /** @var yii\web\View $this */
 
@@ -12,15 +13,18 @@ $this->title = 'My Yii Application 1';
 
     <div class="items1 row row-cols-1 row-cols-md-4 g-4 m-0 p-1">
 
-    <?php //dd ($dataProvider); ?>
         <?php foreach ($dataProvider->getModels() as $item): ?>
             <div class="col">
                 <div class="card" style="width: 18rem;">
-                    <img src="https://placehold.co/256x140" class="card-img-top" alt="...">
+                    <a href="<?= Url::to(['site/show', 'id' => $item->id]) ?>">
+                        <img src="https://placehold.co/256x140" class="card-img-top" alt="...">
+                    </a>
                     <div class="card-body">
                         <h5 class="card-title"><?= htmlspecialchars($item->name) ?></h5>
-                        <p class="card-text"><?= htmlspecialchars($item->description) ?></p>
-                        <?= Html::a('Show', Url::to(['site/show', 'id' => $item->id]), ['class' => 'btn btn-primary']) ?>
+
+                        <p class="card-text">Необходимая сумма: <?= Item::formatSum($item->sum_need) ?> KZT</p>
+                        <p class="card-text">Собрано: <?= Item::formatSum($item->sum_current) ?> KZT</p>
+                        <?= Html::a('Перейти', Url::to(['site/show', 'id' => $item->id]), ['class' => 'btn btn-primary']) ?>
                     </div>
                 </div>
             </div>
