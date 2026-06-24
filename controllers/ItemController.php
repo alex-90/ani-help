@@ -8,6 +8,7 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use app\components\SecureController;
+use yii\web\UploadedFile;
 
 /**
  * ItemController implements the CRUD actions for Item model.
@@ -146,5 +147,51 @@ class ItemController extends SecureController
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+
+    public function actionUpload($id)
+    {
+        $model = $this->findModel($id);
+        
+        // dd('AAA');
+        $file = UploadedFile::getInstanceByName('Item[imageFile]');
+        $fileName = $file->baseName . '.' . $file->extension;
+
+        
+        $remoteKey = 'uploads/' . uniqid('img_', true) . '.' . $file->extension;
+        $url = \Yii::$app->b2->uploadFile($file->tempName, $remoteKey);
+
+        // dd($url);
+        if ($url === null) {
+            return $this->asJson(['error' => 'Ошибка загрузки в хранилище']);
+        }
+        
+        // $doc = new Document();
+        // $doc->item_id = $model->id;
+        // $doc->name = $file->baseName;
+        // $doc->description = $file->baseName;
+        // $doc->status = 1;
+        // $doc->created_at = date('Y-m-d H:i:s');
+        // $doc->sum_current = 0;
+        // $doc->sum_need = Item::formatSum($model->sum_need);
+        // $doc->created_user_id = \Yii::$app->user->id;
+        // $doc->save();
+        dd($file->name);
+        dd($file->extension);
+        dd($file->baseName);
+        // dd(UploadedFile::getInstanceByName('Item[imageFile]'));
+
+        // dd(UploadedFile::getInstanceByName('imageFile[0]'));
+        // dd($model);
+        if ($model->imageFile) {
+            dd($model->imageFile);
+
+            // $model->imageFile->saveAs('uploads/' . $model->imageFile->baseName . '.' . $model->imageFile->extension);
+            // $model->imageFile = null;
+            // $model->save();
+        }
+        
+        return $this->redirect(['view', 'id' => $model->id]);
     }
 }

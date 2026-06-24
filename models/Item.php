@@ -27,6 +27,8 @@ use Yii;
  */
 class Item extends \yii\db\ActiveRecord
 {
+    public $imageFile;
+    
     /**
      * {@inheritdoc}
      */
@@ -49,6 +51,9 @@ class Item extends \yii\db\ActiveRecord
             [['name'], 'string', 'max' => 45],
             [['category_id'], 'exist', 'skipOnError' => true, 'targetClass' => Category::class, 'targetAttribute' => ['category_id' => 'id']],
             [['created_user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['created_user_id' => 'id']],
+
+            
+            [['imageFile'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg, jpeg, gif'],
         ];
     }
 

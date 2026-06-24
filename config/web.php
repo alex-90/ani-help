@@ -49,6 +49,16 @@ $config = [
             'showScriptName' => false,
             'rules' => $routes,
         ],
+        'b2' => [
+            'class'    => 'app\components\B2Storage',
+
+            'keyId'    => $_ENV['B2_KEY_ID'],
+            'appKey'   => $_ENV['B2_APP_KEY'],
+
+            'endpoint' => 'https://s3.eu-central-003.backblazeb2.com',
+            'region'   => 'eu-central-003',
+            'bucket'   => 'kkkk-site',
+        ],
     ],
     'params' => $params,
 ];
