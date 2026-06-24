@@ -32,7 +32,13 @@ $this->params['breadcrumbs'][] = $this->title;
             'id',
             'name',
             'description:ntext',
-            'status',
+            'status' => [
+                'attribute' => 'status_id',
+                'label' => 'Статус',
+                'value' => function ($model) {
+                    return $model->status->name;
+                }
+            ],
             'created_at',
             'updated_at',
             'category_id',

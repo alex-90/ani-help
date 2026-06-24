@@ -8,11 +8,9 @@ use Yii;
  * This is the model class for table "social_networks".
  *
  * @property int $id
- * @property string $link
- * @property string|null $title
- * @property int $item_id
+ * @property string $name
  *
- * @property Item $item
+ * @property SocialNetworkLinks[] $socialNetworkLinks
  */
 class SocialNetworks extends \yii\db\ActiveRecord
 {
@@ -30,11 +28,8 @@ class SocialNetworks extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['link', 'item_id'], 'required'],
-            [['item_id'], 'integer'],
-            [['link'], 'string', 'max' => 255],
-            [['title'], 'string', 'max' => 45],
-            [['item_id'], 'exist', 'skipOnError' => true, 'targetClass' => Item::class, 'targetAttribute' => ['item_id' => 'id']],
+            [['name'], 'required'],
+            [['name'], 'string', 'max' => 45],
         ];
     }
 
@@ -45,19 +40,17 @@ class SocialNetworks extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'link' => 'Link',
-            'title' => 'Title',
-            'item_id' => 'Item ID',
+            'name' => 'Name',
         ];
     }
 
     /**
-     * Gets query for [[Item]].
+     * Gets query for [[SocialNetworkLinks]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getItem()
+    public function getSocialNetworkLinks()
     {
-        return $this->hasOne(Item::class, ['id' => 'item_id']);
+        return $this->hasMany(SocialNetworkLinks::class, ['social_network_id' => 'id']);
     }
 }

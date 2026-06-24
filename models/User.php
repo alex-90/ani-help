@@ -10,21 +10,24 @@ use yii\db\ActiveRecord;
  * This is the model class for table "user".
  *
  * @property int $id
- * @property string $fio
+ * @property string $name
  * @property string|null $iin
  * @property string|null $phone
  * @property string|null $email
- * @property int $type
+ * @property int $role_id
  * @property int $inactive
  * @property string $created_at
  * @property string|null $updated_at
  * @property string $password
  * @property string|null $auth_key
+ * @property int $corporate
  *
- * @property Donate[] $donates
+ * @property Favourites[] $favourites
+ * @property Invoices[] $invoices
  * @property Item[] $items
+ * @property UserRoles $role
  */
-
+// class User extends \yii\db\ActiveRecord
 class User extends ActiveRecord implements IdentityInterface
 
 {
@@ -42,13 +45,15 @@ class User extends ActiveRecord implements IdentityInterface
     public function rules()
     {
         return [
-            [['fio', 'created_at', 'password'], 'required'],
-            [['type', 'inactive'], 'integer'],
+            [['name', 'role_id', 'created_at', 'password'], 'required'],
+            [['role_id', 'inactive', 'corporate'], 'integer'],
             [['created_at', 'updated_at'], 'safe'],
-            [['fio', 'iin', 'phone', 'email'], 'string', 'max' => 45],
-            [['password', 'auth_key'], 'string', 'max' => 255],
+            [['name', 'password', 'auth_key'], 'string', 'max' => 255],
+            [['iin', 'phone', 'email'], 'string', 'max' => 45],
             [['iin'], 'unique'],
             [['phone'], 'unique'],
+            [['email'], 'unique'],
+            [['role_id'], 'exist', 'skipOnError' => true, 'targetClass' => UserRoles::class, 'targetAttribute' => ['role_id' => 'id']],
         ];
     }
 
@@ -59,27 +64,38 @@ class User extends ActiveRecord implements IdentityInterface
     {
         return [
             'id' => 'ID',
-            'fio' => 'Fio',
+            'name' => 'Name',
             'iin' => 'Iin',
             'phone' => 'Phone',
             'email' => 'Email',
-            'type' => 'Type',
+            'role_id' => 'Role ID',
             'inactive' => 'Inactive',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
             'password' => 'Password',
             'auth_key' => 'Auth Key',
+            'corporate' => 'Corporate',
         ];
     }
 
     /**
-     * Gets query for [[Donates]].
+     * Gets query for [[Favourites]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getDonates()
+    public function getFavourites()
     {
-        return $this->hasMany(Donate::class, ['user_id' => 'id']);
+        return $this->hasMany(Favourites::class, ['user_id' => 'id']);
+    }
+
+    /**
+     * Gets query for [[Invoices]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getInvoices()
+    {
+        return $this->hasMany(Invoices::class, ['user_id' => 'id']);
     }
 
     /**
@@ -91,6 +107,17 @@ class User extends ActiveRecord implements IdentityInterface
     {
         return $this->hasMany(Item::class, ['created_user_id' => 'id']);
     }
+
+    /**
+     * Gets query for [[Role]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getRole()
+    {
+        return $this->hasOne(UserRoles::class, ['id' => 'role_id']);
+    }
+
 
     /**
      * Finds an identity by the given ID.
@@ -150,9 +177,14 @@ class User extends ActiveRecord implements IdentityInterface
         return false;
     }
 
+    /**
+     * Validates password
+     *
+     * @param string $password password to validate
+     * @return bool if password provided is valid for current user
+     */
     public function validatePassword($password)
     {
         return Yii::$app->getSecurity()->validatePassword($password, $this->password);
     }
 }
-

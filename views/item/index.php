@@ -29,7 +29,14 @@ $this->params['breadcrumbs'][] = $this->title;
             'id',
             'name',
             'description:ntext',
-            'status',
+            'status' => [
+                'attribute' => 'status_id',
+                'label' => 'Статус',
+                'value' => function ($model) {
+                    return $model->status->name;
+                }
+            ],
+            // 'status',
             'created_at',
             //'updated_at',
             //'category_id',
@@ -37,7 +44,7 @@ $this->params['breadcrumbs'][] = $this->title;
             //'created_by_id',
             //'sum',
             [
-                'class' => ActionColumn::className(),
+                'class' => ActionColumn::class,
                 'urlCreator' => function ($action, Item $model, $key, $index, $column) {
                     return Url::toRoute([$action, 'id' => $model->id]);
                  }

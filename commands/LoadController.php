@@ -11,6 +11,10 @@ use app\models\Category;
 use app\models\Document;
 use app\models\Donate;
 use app\models\Item;
+use app\models\UserRoles;
+use app\models\ItemStatus;
+use app\models\SocialNetworks;
+use app\models\Invoices;
 use app\models\User;
 use yii\console\Controller;
 use yii\console\ExitCode;
@@ -33,21 +37,30 @@ class LoadController extends Controller
     public function actionIndex()
     {
         $category = new Category();
-        $category->name = 'Люди';
+        $category->name = 'Коты';
         $category->save();
 
         $category = new Category();
-        $category->name = 'Животные';
+        $category->name = 'Собаки';
         $category->save();
 
 
+        $role = new UserRoles();
+        $role->name = 'Admin';
+        $role->save();
+        
+        $role = new UserRoles();
+        $role->name = 'Пользователь';
+        $role->save();
+
 
         $user = new User();
-        $user->fio = 'alex';
+        $user->name = 'alex';
         $user->iin = '1234567890';
         $user->phone = '+77077777777';
         $user->email = 'alex@mail.ru';
-        $user->type = 1;
+        // $user->role = 1;
+        $user->role_id = 1;
         $user->inactive = 0;
         $password = '123';
         $hash = \Yii::$app->getSecurity()->generatePasswordHash($password);
@@ -62,32 +75,89 @@ class LoadController extends Controller
         
         $user->save();
 
+
+        $itemStatus = new ItemStatus();
+        $itemStatus->name = 'Сбор открыт';
+        $itemStatus->save();
+
+        $itemStatus = new ItemStatus();
+        $itemStatus->name = 'Сбор закрыт';
+        $itemStatus->save();
+
+        $itemStatus = new ItemStatus();
+        $itemStatus->name = 'Сбор приостановлен';
+        $itemStatus->save();
+
         $item = new Item();
         $item->name = 'jhjhkhk';
         $item->description = 'sfvjdsjkgsjbndfjknvjsdf';
 
-        $item->status = 0;
+        $item->status_id = 1;
         $item->created_at = date('Y-m-d H:i:s');
         $item->category_id = 1;
         $item->created_user_id = 1;
         $item->sum_need = 1000000;
+        $item->currency = 'KZT';
         $item->sum_current = 0;
         $item->save();
 
-        $donate = new Donate();
-        $donate->user_id = 1;
-        $donate->item_id = 1;
-        $donate->sum = 1000;
-        $donate->comment = 'sadsf';
-        $donate->created_at = date('Y-m-d H:i:s');
-        $donate->save();
+        $socialNetwork = new SocialNetworks();
+        $socialNetwork->name = 'Instagram';
+        $socialNetwork->save();
+        
+        $socialNetwork = new SocialNetworks();
+        $socialNetwork->name = 'Telegram';
+        $socialNetwork->save();
+        
+        $socialNetwork = new SocialNetworks();
+        $socialNetwork->name = 'TikTok';
+        $socialNetwork->save();
+        
+        $socialNetwork = new SocialNetworks();
+        $socialNetwork->name = 'Facebook';
+        $socialNetwork->save();
+        
+        $socialNetwork = new SocialNetworks();
+        $socialNetwork->name = 'VK';
+        $socialNetwork->save();
 
-        $donate = new Donate();
-        // $donate->user_id = 1;
-        $donate->item_id = 1;
-        $donate->sum = 2000;
-        $donate->created_at = date('Y-m-d H:i:s');
-        $donate->save();
+
+        $invoice = new Invoices();
+        $invoice->item_id = 1;
+        $invoice->sum = 1000;
+        $invoice->comment = 'sadsf';
+        $invoice->status = 'Unpaid';
+        $invoice->currency = 'KZT';
+        $invoice->created_at = date('Y-m-d H:i:s');        
+
+        // $r = $invoice->validate();
+        // var_dump($invoice->getErrors());exit;
+
+        $invoice->save();
+
+
+        $invoice = new Invoices();
+        $invoice->item_id = 1;
+        $invoice->sum = 2000;
+        $invoice->comment = 'sadsf';
+        $invoice->status = 'Unpaid';
+        $invoice->currency = 'KZT';
+        $invoice->user_id = 1;
+        $invoice->created_at = date('Y-m-d H:i:s');        
+
+        $invoice->save();
+
+
+
+        $invoice = new Invoices();
+        $invoice->item_id = 1;
+        $invoice->sum = -500;
+        $invoice->comment = 'sadsf';
+        $invoice->status = 'Unpaid';
+        $invoice->currency = 'KZT';
+        $invoice->created_at = date('Y-m-d H:i:s');        
+
+        $invoice->save();
 
 
         $document = new Document();

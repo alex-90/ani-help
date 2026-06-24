@@ -10,20 +10,31 @@ use Yii;
  * @property int $id
  * @property string $name
  * @property string|null $description
- * @property int $status
  * @property string $created_at
  * @property string|null $updated_at
+ * @property int $status_id
  * @property int $category_id
  * @property string|null $before_dt
  * @property int $created_user_id
  * @property float $sum_need
  * @property float $sum_current
+ * @property string|null $currency
+ * @property int|null $reason_id
+ * @property string|null $reason_text
  *
  * @property Category $category
  * @property User $createdUser
  * @property Document[] $documents
- * @property Donate[] $donates
- * @property SocialNetworks[] $socialNetworks
+ * @property Favourites[] $favourites
+ * @property Images[] $images
+ * @property Invoices[] $invoices
+ * @property Item[] $item1s
+ * @property Item[] $item2s
+ * @property Reason $reason
+ * @property RelatedItems[] $relatedItems
+ * @property RelatedItems[] $relatedItems0
+ * @property SocialNetworkLinks[] $socialNetworkLinks
+ * @property ItemStatus $status
  */
 class Item extends \yii\db\ActiveRecord
 {
@@ -43,17 +54,17 @@ class Item extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['name', 'created_at', 'category_id', 'created_user_id', 'sum_need', 'sum_current'], 'required'],
+            [['name', 'created_at', 'status_id', 'category_id', 'created_user_id', 'sum_need', 'sum_current'], 'required'],
             [['description'], 'string'],
-            [['status', 'category_id', 'created_user_id'], 'integer'],
             [['created_at', 'updated_at', 'before_dt'], 'safe'],
+            [['status_id', 'category_id', 'created_user_id', 'reason_id'], 'integer'],
             [['sum_need', 'sum_current'], 'number'],
-            [['name'], 'string', 'max' => 45],
+            [['name', 'currency'], 'string', 'max' => 45],
+            [['reason_text'], 'string', 'max' => 255],
             [['category_id'], 'exist', 'skipOnError' => true, 'targetClass' => Category::class, 'targetAttribute' => ['category_id' => 'id']],
+            [['status_id'], 'exist', 'skipOnError' => true, 'targetClass' => ItemStatus::class, 'targetAttribute' => ['status_id' => 'id']],
+            [['reason_id'], 'exist', 'skipOnError' => true, 'targetClass' => Reason::class, 'targetAttribute' => ['reason_id' => 'id']],
             [['created_user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['created_user_id' => 'id']],
-
-            
-            [['imageFile'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg, jpeg, gif'],
         ];
     }
 
@@ -66,14 +77,17 @@ class Item extends \yii\db\ActiveRecord
             'id' => 'ID',
             'name' => 'Name',
             'description' => 'Description',
-            'status' => 'Status',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
+            'status_id' => 'Status ID',
             'category_id' => 'Category ID',
             'before_dt' => 'Before Dt',
             'created_user_id' => 'Created User ID',
             'sum_need' => 'Sum Need',
             'sum_current' => 'Sum Current',
+            'currency' => 'Currency',
+            'reason_id' => 'Reason ID',
+            'reason_text' => 'Reason Text',
         ];
     }
 
@@ -108,24 +122,105 @@ class Item extends \yii\db\ActiveRecord
     }
 
     /**
-     * Gets query for [[Donates]].
+     * Gets query for [[Favourites]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getDonates()
+    public function getFavourites()
     {
-        return $this->hasMany(Donate::class, ['item_id' => 'id']);
+        return $this->hasMany(Favourites::class, ['item_id' => 'id']);
     }
 
     /**
-     * Gets query for [[SocialNetworks]].
+     * Gets query for [[Images]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getSocialNetworks()
+    public function getImages()
     {
-        return $this->hasMany(SocialNetworks::class, ['item_id' => 'id']);
+        return $this->hasMany(Images::class, ['item_id' => 'id']);
     }
+
+    /**
+     * Gets query for [[Invoices]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getInvoices()
+    {
+        return $this->hasMany(Invoices::class, ['item_id' => 'id']);
+    }
+
+    /**
+     * Gets query for [[Item1s]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getItem1s()
+    {
+        return $this->hasMany(Item::class, ['id' => 'item1_id'])->viaTable('related_items', ['item2_id' => 'id']);
+    }
+
+    /**
+     * Gets query for [[Item2s]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getItem2s()
+    {
+        return $this->hasMany(Item::class, ['id' => 'item2_id'])->viaTable('related_items', ['item1_id' => 'id']);
+    }
+
+    /**
+     * Gets query for [[Reason]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getReason()
+    {
+        return $this->hasOne(Reason::class, ['id' => 'reason_id']);
+    }
+
+    /**
+     * Gets query for [[RelatedItems]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getRelatedItems()
+    {
+        return $this->hasMany(RelatedItems::class, ['item1_id' => 'id']);
+    }
+
+    /**
+     * Gets query for [[RelatedItems0]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getRelatedItems0()
+    {
+        return $this->hasMany(RelatedItems::class, ['item2_id' => 'id']);
+    }
+
+    /**
+     * Gets query for [[SocialNetworkLinks]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getSocialNetworkLinks()
+    {
+        return $this->hasMany(SocialNetworkLinks::class, ['item_id' => 'id']);
+    }
+
+    /**
+     * Gets query for [[Status]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getStatus()
+    {
+        return $this->hasOne(ItemStatus::class, ['id' => 'status_id']);
+    }
+
 
     public function beforeValidate()
     {
@@ -135,8 +230,10 @@ class Item extends \yii\db\ActiveRecord
         return parent::beforeValidate();
     }
 
+
     public static function formatSum($sum)
     {
         return number_format($sum, 2, '.', ' ');
     }
+
 }
