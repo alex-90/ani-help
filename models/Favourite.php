@@ -5,26 +5,23 @@ namespace app\models;
 use Yii;
 
 /**
- * This is the model class for table "images".
+ * This is the model class for table "Favourite".
  *
  * @property int $id
+ * @property int $user_id
  * @property int $item_id
- * @property string $url
- * @property string|null $title
- * @property int $position
- * @property string $created_at
- * @property int $sensitive
  *
  * @property Item $item
+ * @property User $user
  */
-class Images extends \yii\db\ActiveRecord
+class Favourite extends \yii\db\ActiveRecord
 {
     /**
      * {@inheritdoc}
      */
     public static function tableName()
     {
-        return 'images';
+        return 'favourites';
     }
 
     /**
@@ -33,12 +30,10 @@ class Images extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['item_id', 'url', 'created_at'], 'required'],
-            [['item_id', 'position', 'sensitive'], 'integer'],
-            [['url'], 'string'],
-            [['created_at'], 'safe'],
-            [['title'], 'string', 'max' => 255],
+            [['user_id', 'item_id'], 'required'],
+            [['user_id', 'item_id'], 'integer'],
             [['item_id'], 'exist', 'skipOnError' => true, 'targetClass' => Item::class, 'targetAttribute' => ['item_id' => 'id']],
+            [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['user_id' => 'id']],
         ];
     }
 
@@ -49,12 +44,8 @@ class Images extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
+            'user_id' => 'User ID',
             'item_id' => 'Item ID',
-            'url' => 'Url',
-            'title' => 'Title',
-            'position' => 'Position',
-            'created_at' => 'Created At',
-            'sensitive' => 'Sensitive',
         ];
     }
 
@@ -66,5 +57,15 @@ class Images extends \yii\db\ActiveRecord
     public function getItem()
     {
         return $this->hasOne(Item::class, ['id' => 'item_id']);
+    }
+
+    /**
+     * Gets query for [[User]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getUser()
+    {
+        return $this->hasOne(User::class, ['id' => 'user_id']);
     }
 }

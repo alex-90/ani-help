@@ -25,15 +25,15 @@ use Yii;
  * @property Category $category
  * @property User $createdUser
  * @property Document[] $documents
- * @property Favourites[] $favourites
- * @property Images[] $images
- * @property Invoices[] $invoices
+ * @property Favourite[] $Favourite
+ * @property Image[] $Image
+ * @property Invoice[] $Invoice
  * @property Item[] $item1s
  * @property Item[] $item2s
  * @property Reason $reason
  * @property RelatedItems[] $relatedItems
  * @property RelatedItems[] $relatedItems0
- * @property SocialNetworkLinks[] $socialNetworkLinks
+ * @property SocialNetworkLink[] $SocialNetworkLink
  * @property ItemStatus $status
  */
 class Item extends \yii\db\ActiveRecord
@@ -45,7 +45,7 @@ class Item extends \yii\db\ActiveRecord
      */
     public static function tableName()
     {
-        return 'item';
+        return 'items';
     }
 
     /**
@@ -122,33 +122,33 @@ class Item extends \yii\db\ActiveRecord
     }
 
     /**
-     * Gets query for [[Favourites]].
+     * Gets query for [[Favourite]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getFavourites()
+    public function getFavourite()
     {
-        return $this->hasMany(Favourites::class, ['item_id' => 'id']);
+        return $this->hasMany(Favourite::class, ['item_id' => 'id']);
     }
 
     /**
-     * Gets query for [[Images]].
+     * Gets query for [[Image]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getImages()
+    public function getImage()
     {
-        return $this->hasMany(Images::class, ['item_id' => 'id']);
+        return $this->hasMany(Image::class, ['item_id' => 'id']);
     }
 
     /**
-     * Gets query for [[Invoices]].
+     * Gets query for [[Invoice]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getInvoices()
+    public function getInvoice()
     {
-        return $this->hasMany(Invoices::class, ['item_id' => 'id']);
+        return $this->hasMany(Invoice::class, ['item_id' => 'id']);
     }
 
     /**
@@ -202,13 +202,13 @@ class Item extends \yii\db\ActiveRecord
     }
 
     /**
-     * Gets query for [[SocialNetworkLinks]].
+     * Gets query for [[SocialNetworkLink]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getSocialNetworkLinks()
+    public function getSocialNetworkLink()
     {
-        return $this->hasMany(SocialNetworkLinks::class, ['item_id' => 'id']);
+        return $this->hasMany(SocialNetworkLink::class, ['item_id' => 'id']);
     }
 
     /**

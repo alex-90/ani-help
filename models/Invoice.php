@@ -5,7 +5,7 @@ namespace app\models;
 use Yii;
 
 /**
- * This is the model class for table "invoices".
+ * This is the model class for table "Invoice".
  *
  * @property int $id
  * @property int|null $user_id
@@ -20,7 +20,7 @@ use Yii;
  * @property Item $item
  * @property User $user
  */
-class Invoices extends \yii\db\ActiveRecord
+class Invoice extends \yii\db\ActiveRecord
 {
     /**
      * {@inheritdoc}

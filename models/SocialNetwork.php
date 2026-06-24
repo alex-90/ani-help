@@ -10,9 +10,9 @@ use Yii;
  * @property int $id
  * @property string $name
  *
- * @property SocialNetworkLinks[] $socialNetworkLinks
+ * @property SocialNetworkLink[] $SocialNetworkLink
  */
-class SocialNetworks extends \yii\db\ActiveRecord
+class SocialNetwork extends \yii\db\ActiveRecord
 {
     /**
      * {@inheritdoc}
@@ -45,12 +45,12 @@ class SocialNetworks extends \yii\db\ActiveRecord
     }
 
     /**
-     * Gets query for [[SocialNetworkLinks]].
+     * Gets query for [[SocialNetworkLink]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getSocialNetworkLinks()
+    public function getSocialNetworkLink()
     {
-        return $this->hasMany(SocialNetworkLinks::class, ['social_network_id' => 'id']);
+        return $this->hasMany(SocialNetworkLink::class, ['social_network_id' => 'id']);
     }
 }

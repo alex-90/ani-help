@@ -22,10 +22,10 @@ use yii\db\ActiveRecord;
  * @property string|null $auth_key
  * @property int $corporate
  *
- * @property Favourites[] $favourites
- * @property Invoices[] $invoices
+ * @property Favourite[] $Favourite
+ * @property Invoice[] $Invoice
  * @property Item[] $items
- * @property UserRoles $role
+ * @property UserRole $role
  */
 // class User extends \yii\db\ActiveRecord
 class User extends ActiveRecord implements IdentityInterface
@@ -36,7 +36,7 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public static function tableName()
     {
-        return 'user';
+        return 'users';
     }
 
     /**
@@ -53,7 +53,7 @@ class User extends ActiveRecord implements IdentityInterface
             [['iin'], 'unique'],
             [['phone'], 'unique'],
             [['email'], 'unique'],
-            [['role_id'], 'exist', 'skipOnError' => true, 'targetClass' => UserRoles::class, 'targetAttribute' => ['role_id' => 'id']],
+            [['role_id'], 'exist', 'skipOnError' => true, 'targetClass' => UserRole::class, 'targetAttribute' => ['role_id' => 'id']],
         ];
     }
 
@@ -79,23 +79,23 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
     /**
-     * Gets query for [[Favourites]].
+     * Gets query for [[Favourite]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getFavourites()
+    public function getFavourite()
     {
-        return $this->hasMany(Favourites::class, ['user_id' => 'id']);
+        return $this->hasMany(Favourite::class, ['user_id' => 'id']);
     }
 
     /**
-     * Gets query for [[Invoices]].
+     * Gets query for [[Invoice]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getInvoices()
+    public function getInvoice()
     {
-        return $this->hasMany(Invoices::class, ['user_id' => 'id']);
+        return $this->hasMany(Invoice::class, ['user_id' => 'id']);
     }
 
     /**
@@ -115,7 +115,7 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public function getRole()
     {
-        return $this->hasOne(UserRoles::class, ['id' => 'role_id']);
+        return $this->hasOne(UserRole::class, ['id' => 'role_id']);
     }
 
 

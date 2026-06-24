@@ -11,10 +11,10 @@ use app\models\Category;
 use app\models\Document;
 use app\models\Donate;
 use app\models\Item;
-use app\models\UserRoles;
+use app\models\UserRole;
 use app\models\ItemStatus;
-use app\models\SocialNetworks;
-use app\models\Invoices;
+use app\models\SocialNetwork;
+use app\models\Invoice;
 use app\models\User;
 use yii\console\Controller;
 use yii\console\ExitCode;
@@ -45,11 +45,11 @@ class LoadController extends Controller
         $category->save();
 
 
-        $role = new UserRoles();
+        $role = new UserRole();
         $role->name = 'Admin';
         $role->save();
         
-        $role = new UserRoles();
+        $role = new UserRole();
         $role->name = 'Пользователь';
         $role->save();
 
@@ -101,28 +101,28 @@ class LoadController extends Controller
         $item->sum_current = 0;
         $item->save();
 
-        $socialNetwork = new SocialNetworks();
+        $socialNetwork = new SocialNetwork();
         $socialNetwork->name = 'Instagram';
         $socialNetwork->save();
         
-        $socialNetwork = new SocialNetworks();
+        $socialNetwork = new SocialNetwork();
         $socialNetwork->name = 'Telegram';
         $socialNetwork->save();
         
-        $socialNetwork = new SocialNetworks();
+        $socialNetwork = new SocialNetwork();
         $socialNetwork->name = 'TikTok';
         $socialNetwork->save();
         
-        $socialNetwork = new SocialNetworks();
+        $socialNetwork = new SocialNetwork();
         $socialNetwork->name = 'Facebook';
         $socialNetwork->save();
         
-        $socialNetwork = new SocialNetworks();
+        $socialNetwork = new SocialNetwork();
         $socialNetwork->name = 'VK';
         $socialNetwork->save();
 
 
-        $invoice = new Invoices();
+        $invoice = new Invoice();
         $invoice->item_id = 1;
         $invoice->sum = 1000;
         $invoice->comment = 'sadsf';
@@ -136,7 +136,7 @@ class LoadController extends Controller
         $invoice->save();
 
 
-        $invoice = new Invoices();
+        $invoice = new Invoice();
         $invoice->item_id = 1;
         $invoice->sum = 2000;
         $invoice->comment = 'sadsf';
@@ -149,7 +149,7 @@ class LoadController extends Controller
 
 
 
-        $invoice = new Invoices();
+        $invoice = new Invoice();
         $invoice->item_id = 1;
         $invoice->sum = -500;
         $invoice->comment = 'sadsf';

@@ -14,9 +14,9 @@ use Yii;
  * @property int $social_network_id
  *
  * @property Item $item
- * @property SocialNetworks $socialNetwork
+ * @property SocialNetwork $socialNetwork
  */
-class SocialNetworkLinks extends \yii\db\ActiveRecord
+class SocialNetworkLink extends \yii\db\ActiveRecord
 {
     /**
      * {@inheritdoc}
@@ -36,7 +36,7 @@ class SocialNetworkLinks extends \yii\db\ActiveRecord
             [['item_id', 'social_network_id'], 'integer'],
             [['link'], 'string', 'max' => 255],
             [['title'], 'string', 'max' => 45],
-            [['social_network_id'], 'exist', 'skipOnError' => true, 'targetClass' => SocialNetworks::class, 'targetAttribute' => ['social_network_id' => 'id']],
+            [['social_network_id'], 'exist', 'skipOnError' => true, 'targetClass' => SocialNetwork::class, 'targetAttribute' => ['social_network_id' => 'id']],
             [['item_id'], 'exist', 'skipOnError' => true, 'targetClass' => Item::class, 'targetAttribute' => ['item_id' => 'id']],
         ];
     }
@@ -72,6 +72,6 @@ class SocialNetworkLinks extends \yii\db\ActiveRecord
      */
     public function getSocialNetwork()
     {
-        return $this->hasOne(SocialNetworks::class, ['id' => 'social_network_id']);
+        return $this->hasOne(SocialNetwork::class, ['id' => 'social_network_id']);
     }
 }
