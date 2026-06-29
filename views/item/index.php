@@ -45,6 +45,7 @@ $this->params['breadcrumbs'][] = $this->title;
             //'sum',
             [
                 'class' => ActionColumn::class,
+                'template' => '{view} {update}',
                 'urlCreator' => function ($action, Item $model, $key, $index, $column) {
                     return Url::toRoute([$action, 'id' => $model->id]);
                  }

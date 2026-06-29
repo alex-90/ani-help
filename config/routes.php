@@ -2,9 +2,15 @@
 
 return [
     '/' => 'site/index',
-    '/show/<id:\d+>' => 'site/show',
+    // '/show/<id:\d+>' => 'site/show',
+
+    '/item/<id:\d+>' => 'site/show',
 
     'create-new' => 'item/create',
+
+    'my-items' => 'item/own-items',
+
+    'edit/<id:\d+>' => 'item/update',
 
     'items' => 'item/index',
     'categories' => 'category/index',

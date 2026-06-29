@@ -29,6 +29,8 @@ class ItemController extends SecureController
                     'class' => VerbFilter::className(),
                     'actions' => [
                         'delete' => ['POST'],
+                        'toggle-published' => ['POST'],
+                        'stop' => ['POST'],
                     ],
                 ],
             ]
@@ -84,10 +86,11 @@ class ItemController extends SecureController
         // $model->load($this->request->post());
         
         $model->created_user_id = \Yii::$app->user->id;
-        $model->created_at = date('Y-m-d H:i:s');
         $model->sum_current = 0;
         $model->status_id = ItemStatus::STATUS_OPEN;
-        // $model->validate();
+        // echo($model->validate());
+        // dd($model->getErrors());
+        // dd($model->validate());
         
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
@@ -114,8 +117,12 @@ class ItemController extends SecureController
     {
         $model = $this->findModel($id);
 
+        if ($model->published) {
+            throw new \yii\web\ForbiddenHttpException('Опубликованный сбор редактировать нельзя.');
+        }
+
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            return $this->redirect(['own-items']);
         }
 
         return $this->render('update', [
@@ -132,9 +139,7 @@ class ItemController extends SecureController
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
-
-        return $this->redirect(['index']);
+        throw new \yii\web\ForbiddenHttpException('Удаление сборов запрещено.');
     }
 
     /**
@@ -211,5 +216,81 @@ class ItemController extends SecureController
         }
 
         return $this->asJson(['ok' => true]);
+    }
+
+
+    public function actionTogglePublished($id)
+    {
+        $model = $this->findModel($id);
+        $model->published = $model->published ? 0 : 1;
+        $model->save(false);
+
+        return $this->redirect(\Yii::$app->request->referrer ?: ['own-items']);
+    }
+
+    public function actionStop($id)
+    {
+        $model = $this->findModel($id);
+
+        $reasonId = \Yii::$app->request->post('reason_id');
+        $reasonText = trim((string) \Yii::$app->request->post('reason_text', ''));
+
+        $model->status_id = ItemStatus::STATUS_CLOSED;
+        $model->reason_id = $reasonId !== '' && $reasonId !== null ? (int) $reasonId : null;
+        $model->reason_text = $reasonText !== '' ? $reasonText : null;
+        $model->save(false);
+
+        return $this->redirect(\Yii::$app->request->referrer ?: ['own-items']);
+    }
+
+    /**
+     * Проверка принадлежности сбора текущему пользователю.
+     * @inheritDoc
+     */
+    protected function ownerId($action)
+    {
+        $id = \Yii::$app->request->get('id');
+        if ($id === null) {
+            return null;
+        }
+
+        switch ($action->id) {
+            case 'update':
+            case 'upload':
+            case 'reorder-images':
+            case 'toggle-published':
+            case 'stop':
+                return $this->findModel($id)->created_user_id;
+
+            case 'delete-image':
+                $image = Image::findOne(['id' => $id]);
+                return $image === null
+                    ? null
+                    : $this->findModel($image->item_id)->created_user_id;
+        }
+
+        return null;
+    }
+
+
+    public function actionOwnItems()
+    {
+        $userId = \Yii::$app->user->id;
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => Item::find()->where(['created_user_id' => $userId]),
+            'pagination' => [
+                'pageSize' => 10,
+            ],
+            'sort' => [
+                'defaultOrder' => [
+                    'id' => SORT_DESC,
+                ],
+            ],
+        ]);
+
+        return $this->render('my-items', [
+            'dataProvider' => $dataProvider,
+        ]);
     }
 }

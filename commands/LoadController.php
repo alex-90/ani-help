@@ -16,6 +16,7 @@ use app\models\ItemStatus;
 use app\models\SocialNetwork;
 use app\models\Invoice;
 use app\models\User;
+use app\models\Reason;
 use yii\console\Controller;
 use yii\console\ExitCode;
 
@@ -166,6 +167,14 @@ class LoadController extends Controller
         $document->type = 0;
         $document->item_id = 1;
         $document->save();
+
+        $reason = new Reason();
+        $reason->name = 'Собрана необходимая сумма';
+        $reason->save();
+
+        $reason = new Reason();
+        $reason->name = 'Не получилось собрать';
+        $reason->save();
 
 
         echo 'OK' . "\n";

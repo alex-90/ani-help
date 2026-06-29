@@ -3,6 +3,7 @@
 namespace app\models;
 
 use Yii;
+use yii\behaviors\TimestampBehavior;
 
 /**
  * This is the model class for table "item".
@@ -51,6 +52,24 @@ class Item extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
+    public function behaviors()
+    {
+        return [
+            [
+                'class' => TimestampBehavior::class,
+                'createdAtAttribute' => 'created_at',
+                'updatedAtAttribute' => 'updated_at',
+                // колонки хранятся как строки datetime
+                'value' => function () {
+                    return date('Y-m-d H:i:s');
+                },
+            ],
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function rules()
     {
         return [
@@ -90,6 +109,7 @@ class Item extends \yii\db\ActiveRecord
             'currency' => 'Валюта',
             'reason_id' => 'Причина закрытия сбора',
             'reason_text' => 'Причина закрытия сбора  (текст)',
+            'published' => 'Опубликован',
         ];
     }
 
@@ -228,7 +248,13 @@ class Item extends \yii\db\ActiveRecord
     {
         $this->name = trim(strip_tags($this->name));
         $this->description = trim(strip_tags($this->description));
-        
+
+        // created_at обязателен в rules(), а TimestampBehavior ставит его только
+        // на beforeSave (после валидации) — поэтому задаём его здесь для новых записей
+        if ($this->isNewRecord && empty($this->created_at)) {
+            $this->created_at = date('Y-m-d H:i:s');
+        }
+
         return parent::beforeValidate();
     }
 

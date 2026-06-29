@@ -106,6 +106,10 @@ use app\models\ItemStatus;
                 background: transparent;
                 box-shadow: none;
             }
+            /* прячем угловой крестик, очищающий весь инпут */
+            .item-form .fileinput-remove {
+                display: none !important;
+            }
             /* прячем длинный общий статус-бар "Done" внизу */
             .item-form .file-preview-status,
             .item-form .kv-upload-progress {
