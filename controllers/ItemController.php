@@ -187,4 +187,29 @@ class ItemController extends SecureController
             'imageId' => $image->id,
         ]);
     }
+
+    public function actionDeleteImage($id)
+    {
+        $image = Image::findOne(['id' => $id]);
+        if ($image === null) {
+            return $this->asJson(['error' => 'Изображение не найдено']);
+        }
+
+        $image->delete();
+
+        return $this->asJson([]);
+    }
+
+    public function actionReorderImages($id)
+    {
+        $order = \Yii::$app->request->post('order', []);
+        foreach (array_values($order) as $pos => $imageId) {
+            Image::updateAll(
+                ['position' => $pos + 1],
+                ['id' => (int) $imageId, 'item_id' => $id]
+            );
+        }
+
+        return $this->asJson(['ok' => true]);
+    }
 }
