@@ -4,6 +4,8 @@ return [
     '/' => 'site/index',
     '/show/<id:\d+>' => 'site/show',
 
+    'create-new' => 'item/create',
+
     'items' => 'item/index',
     'categories' => 'category/index',
     'users' => 'user/index',

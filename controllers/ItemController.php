@@ -3,6 +3,8 @@
 namespace app\controllers;
 
 use app\models\Item;
+use app\models\ItemStatus;
+use app\models\Image;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -79,16 +81,18 @@ class ItemController extends SecureController
     {
         $model = new Item();
 
-        $model->load($this->request->post());
+        // $model->load($this->request->post());
         
         $model->created_user_id = \Yii::$app->user->id;
         $model->created_at = date('Y-m-d H:i:s');
         $model->sum_current = 0;
+        $model->status_id = ItemStatus::STATUS_OPEN;
         // $model->validate();
         
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
+                // id уже получен — переходим на update, где работает async-загрузка картинок
+                return $this->redirect(['update', 'id' => $model->id]);
             }
         } else {
             $model->loadDefaultValues();
@@ -153,45 +157,34 @@ class ItemController extends SecureController
     public function actionUpload($id)
     {
         $model = $this->findModel($id);
-        
-        // dd('AAA');
-        $file = UploadedFile::getInstanceByName('Item[imageFile]');
-        $fileName = $file->baseName . '.' . $file->extension;
 
-        
+        $file = UploadedFile::getInstanceByName('Item[imageFile]');
+        if ($file === null) {
+            return $this->asJson(['error' => 'Файл не получен']);
+        }
+
         $remoteKey = 'uploads/' . uniqid('img_', true) . '.' . $file->extension;
         $url = \Yii::$app->b2->uploadFile($file->tempName, $remoteKey);
 
-        // dd($url);
         if ($url === null) {
             return $this->asJson(['error' => 'Ошибка загрузки в хранилище']);
         }
-        
-        // $doc = new Document();
-        // $doc->item_id = $model->id;
-        // $doc->name = $file->baseName;
-        // $doc->description = $file->baseName;
-        // $doc->status = 1;
-        // $doc->created_at = date('Y-m-d H:i:s');
-        // $doc->sum_current = 0;
-        // $doc->sum_need = Item::formatSum($model->sum_need);
-        // $doc->created_user_id = \Yii::$app->user->id;
-        // $doc->save();
-        dd($file->name);
-        dd($file->extension);
-        dd($file->baseName);
-        // dd(UploadedFile::getInstanceByName('Item[imageFile]'));
 
-        // dd(UploadedFile::getInstanceByName('imageFile[0]'));
-        // dd($model);
-        if ($model->imageFile) {
-            dd($model->imageFile);
+        $image = new Image();
+        $image->item_id = $model->id;
+        $image->url = $url;
+        $image->title = $file->baseName;
+        $image->position = (int) Image::find()->where(['item_id' => $model->id])->max('position') + 1;
+        $image->sensitive = 0;
+        $image->created_at = date('Y-m-d H:i:s');
 
-            // $model->imageFile->saveAs('uploads/' . $model->imageFile->baseName . '.' . $model->imageFile->extension);
-            // $model->imageFile = null;
-            // $model->save();
+        if (!$image->save()) {
+            return $this->asJson(['error' => 'Не удалось сохранить изображение']);
         }
-        
-        return $this->redirect(['view', 'id' => $model->id]);
+
+        return $this->asJson([
+            'url' => $url,
+            'imageId' => $image->id,
+        ]);
     }
 }

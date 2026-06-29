@@ -54,7 +54,9 @@ class Item extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['name', 'created_at', 'status_id', 'category_id', 'created_user_id', 'sum_need', 'sum_current'], 'required'],
+            // [['name', 'created_at', 'status_id', 'category_id', 'created_user_id', 'sum_need', 'sum_current'], 'required', 'message' => 'Необходимо заполнить «{attribute}»'],
+            // [['name', 'created_at', 'status_id', 'category_id', 'created_user_id', 'sum_need', 'sum_current'], 'required', 'message' => '{attribute} не может быть пустым'],
+            [['name', 'created_at', 'status_id', 'created_user_id', 'sum_need', 'sum_current'], 'required', 'message' => '{attribute} не может быть пустым'],
             [['description'], 'string'],
             [['created_at', 'updated_at', 'before_dt'], 'safe'],
             [['status_id', 'category_id', 'created_user_id', 'reason_id'], 'integer'],
@@ -75,19 +77,19 @@ class Item extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'name' => 'Name',
-            'description' => 'Description',
-            'created_at' => 'Created At',
-            'updated_at' => 'Updated At',
-            'status_id' => 'Status ID',
-            'category_id' => 'Category ID',
-            'before_dt' => 'Before Dt',
-            'created_user_id' => 'Created User ID',
-            'sum_need' => 'Sum Need',
-            'sum_current' => 'Sum Current',
-            'currency' => 'Currency',
-            'reason_id' => 'Reason ID',
-            'reason_text' => 'Reason Text',
+            'name' => 'Название',
+            'description' => 'Описание',
+            'created_at' => 'Создано',
+            'updated_at' => 'Обновлено',
+            'status_id' => 'Статус',
+            'category_id' => 'Категория',
+            'before_dt' => 'До какой даты желательно собрать',
+            'created_user_id' => 'Создал',
+            'sum_need' => 'Необходимая сумма',
+            'sum_current' => 'Текущая сумма',
+            'currency' => 'Валюта',
+            'reason_id' => 'Причина закрытия сбора',
+            'reason_text' => 'Причина закрытия сбора  (текст)',
         ];
     }
 

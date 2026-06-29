@@ -14,6 +14,13 @@ use Yii;
  */
 class ItemStatus extends \yii\db\ActiveRecord
 {
+    /** Сбор открыт */
+    const STATUS_OPEN = 1;
+    /** Сбор закрыт */
+    const STATUS_CLOSED = 2;
+    /** Сбор приостановлен */
+    const STATUS_PAUSED = 3;
+
     /**
      * {@inheritdoc}
      */
