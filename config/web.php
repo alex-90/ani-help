@@ -10,6 +10,7 @@ $config = [
     'basePath' => dirname(__DIR__),
     'language' => 'ru-RU',
     'sourceLanguage' => 'en-US',
+    'timeZone' => 'Asia/Yekaterinburg',
     'bootstrap' => ['log'],
     'aliases' => [
         '@bower' => '@vendor/bower-asset',

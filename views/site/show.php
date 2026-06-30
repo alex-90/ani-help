@@ -37,6 +37,20 @@ $this->params['breadcrumbs'][] = $this->title;
         </button>
     </div>
 
-    <p><?= Html::encode($model->description) ?></p>
-    
+    <div class="item-description">
+        <?php
+        $lines = preg_split('/\R/u', (string) $model->description);
+        foreach ($lines as $line) {
+            if (preg_match('/^UPD\b(.*)$/u', $line, $m)) {
+                $date = trim($m[1]);
+                echo '<h1>UPD'
+                    . ($date !== '' ? ' <small class="text-muted">' . Html::encode($date) . '</small>' : '')
+                    . '</h1>';
+            } else {
+                echo Html::encode($line) . '<br>';
+            }
+        }
+        ?>
+    </div>
+
 </div>

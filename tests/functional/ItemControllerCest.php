@@ -78,6 +78,8 @@ class ItemControllerCest
         $I->seeResponseCodeIs(403);
     }
 
+    // ---- дозапись в опубликованный сбор ----------------------------------
+
     // ---- редактирование --------------------------------------------------
 
     public function ownerCanOpenUpdateForUnpublishedItem(\FunctionalTester $I)
@@ -87,11 +89,38 @@ class ItemControllerCest
         $I->seeResponseCodeIs(200);
     }
 
-    public function publishedItemCannotBeEdited(\FunctionalTester $I)
+    public function publishedItemOpensRestrictedUpdate(\FunctionalTester $I)
     {
+        // опубликованный сбор открывается в форме (ограниченное редактирование), а не 403
         $I->amLoggedInAs(1);
         $I->amOnRoute('item/update', ['id' => 2]);
-        $I->seeResponseCodeIs(403);
+        $I->seeResponseCodeIs(200);
+    }
+
+    public function publishedItemEditChangesOnlySumAndAppendsText(\FunctionalTester $I)
+    {
+        $old = \app\models\Item::findOne(2)->description;
+
+        $I->amLoggedInAs(1);
+        // пытаемся сменить имя (нельзя) + сумму (можно) + дозапись текста
+        $I->sendAjaxPostRequest(Url::to(['/item/update', 'id' => 2]), [
+            'Item' => [
+                'name' => 'HACKED',
+                'sum_need' => '2222.00',
+                'appendText' => 'Дополнение',
+            ],
+        ]);
+
+        $item = \app\models\Item::findOne(2);
+        // имя не изменилось, сумма обновилась
+        $I->assertSame('Published item', $item->name);
+        $I->assertSame('2222.00', $item->sum_need);
+        // старый текст сохранён, новый дописан после пометки UPD
+        $I->assertStringStartsWith($old, $item->description);
+        $I->assertStringContainsString('UPD', $item->description);
+        $I->assertStringContainsString('Дополнение', $item->description);
+        // публикация и статус не тронуты
+        $I->seeRecord(Item::class, ['id' => 2, 'published' => 1, 'status_id' => 1]);
     }
 
     public function strangerCannotEditForeignItem(\FunctionalTester $I)

@@ -99,8 +99,14 @@ $reasonList = ArrayHelper::map(Reason::find()->orderBy('name')->all(), 'id', 'na
                         return $badge;
                     }
 
-                    // опубликован: снять с публикации нельзя, можно только остановить сбор
-                    return Html::button('Остановить сбор', [
+                    // опубликован: ограниченное редактирование (сумма, дозапись, картинки) или остановка
+                    $edit = Html::a(
+                        'Обновить сбор',
+                        ['update', 'id' => $model->id],
+                        ['class' => 'btn btn-sm btn-outline-primary']
+                    );
+
+                    $stop = Html::button('Остановить сбор', [
                         'class' => 'btn btn-sm btn-danger js-stop-item',
                         'data' => [
                             'bs-toggle' => 'modal',
@@ -109,6 +115,8 @@ $reasonList = ArrayHelper::map(Reason::find()->orderBy('name')->all(), 'id', 'na
                             'name' => $model->name,
                         ],
                     ]);
+
+                    return $edit . ' ' . $stop;
                 }
             ],
         ],

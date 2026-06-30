@@ -11,27 +11,46 @@ use app\models\ItemStatus;
 /** @var yii\web\View $this */
 /** @var app\models\Item $model */
 /** @var yii\widgets\ActiveForm $form */
+
+// Опубликованный сбор редактируется ограниченно: заблокированы все поля,
+// кроме суммы и дозаписи текста; картинки можно добавлять.
+$restricted = !$model->isNewRecord && $model->published;
 ?>
 
 <div class="item-form">
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
+    <?php if ($restricted): ?>
+        <div class="alert alert-info">
+            Сбор опубликован. Менять можно только сумму, добавлять текст (в конец описания)
+            и загружать изображения.
+        </div>
+    <?php endif; ?>
 
-    <?= $form->field($model, 'description')->textarea(['rows' => 6]) ?>
+    <?= $form->field($model, 'name')->textInput(['maxlength' => true, 'disabled' => $restricted]) ?>
+
+    <?php if ($restricted): ?>
+        <?= $form->field($model, 'description')->textarea(['rows' => 6, 'disabled' => true]) ?>
+        <?= $form->field($model, 'appendText')->textarea([
+            'rows' => 4,
+            'placeholder' => 'Новый текст добавится в конец описания после пометки UPD',
+        ])->label('Дописать') ?>
+    <?php else: ?>
+        <?= $form->field($model, 'description')->textarea(['rows' => 6]) ?>
+    <?php endif; ?>
 
     <?= $form->field($model, 'status_id')->dropDownList(
         ArrayHelper::map(ItemStatus::find()->orderBy('name')->all(), 'id', 'name'),
-        ['prompt' => 'Выберите статус']
+        ['prompt' => 'Выберите статус', 'disabled' => $restricted]
     ) ?>
 
     <?= $form->field($model, 'category_id')->dropDownList(
         ArrayHelper::map(Category::find()->orderBy('name')->all(), 'id', 'name'),
-        ['prompt' => 'Выберите категорию']
+        ['prompt' => 'Выберите категорию', 'disabled' => $restricted]
     ) ?>
 
-    <?= $form->field($model, 'before_dt')->input('date', ['style' => 'max-width: 200px']) ?>
+    <?= $form->field($model, 'before_dt')->input('date', ['style' => 'max-width: 200px', 'disabled' => $restricted]) ?>
 
     <?= $form->field($model, 'sum_need')->textInput(['maxlength' => true, 'style' => 'max-width: 200px']) ?>
 

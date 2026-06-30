@@ -117,8 +117,30 @@ class ItemController extends SecureController
     {
         $model = $this->findModel($id);
 
+        // Опубликованный сбор редактируется ограниченно: можно изменить только сумму,
+        // дописать текст (старый не меняется) и добавить картинки. Остальные поля заблокированы.
         if ($model->published) {
-            throw new \yii\web\ForbiddenHttpException('Опубликованный сбор редактировать нельзя.');
+            if ($this->request->isPost) {
+                $post = $this->request->post('Item', []);
+
+                if (isset($post['sum_need'])) {
+                    $model->sum_need = $post['sum_need'];
+                }
+
+                $append = trim((string) ($post['appendText'] ?? ''));
+                if ($append !== '') {
+                    $prefix = (string) $model->description === '' ? '' : $model->description . "\n\n";
+                    $model->description = $prefix . 'UPD ' . date('d.m.Y H:i') . "\n" . $append;
+                }
+
+                if ($model->save()) {
+                    return $this->redirect(['own-items']);
+                }
+            }
+
+            return $this->render('update', [
+                'model' => $model,
+            ]);
         }
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {

@@ -40,7 +40,10 @@ use yii\behaviors\TimestampBehavior;
 class Item extends \yii\db\ActiveRecord
 {
     public $imageFile;
-    
+
+    /** Текст дозаписи для опубликованного сбора (добавляется в конец описания) */
+    public $appendText;
+
     /**
      * {@inheritdoc}
      */
@@ -76,7 +79,7 @@ class Item extends \yii\db\ActiveRecord
             // [['name', 'created_at', 'status_id', 'category_id', 'created_user_id', 'sum_need', 'sum_current'], 'required', 'message' => 'Необходимо заполнить «{attribute}»'],
             // [['name', 'created_at', 'status_id', 'category_id', 'created_user_id', 'sum_need', 'sum_current'], 'required', 'message' => '{attribute} не может быть пустым'],
             [['name', 'created_at', 'status_id', 'created_user_id', 'sum_need', 'sum_current'], 'required', 'message' => '{attribute} не может быть пустым'],
-            [['description'], 'string'],
+            [['description', 'appendText'], 'string'],
             [['created_at', 'updated_at', 'before_dt'], 'safe'],
             [['status_id', 'category_id', 'created_user_id', 'reason_id'], 'integer'],
             [['sum_need', 'sum_current'], 'number'],
