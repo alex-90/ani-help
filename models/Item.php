@@ -22,6 +22,7 @@ use yii\behaviors\TimestampBehavior;
  * @property string|null $currency
  * @property int|null $reason_id
  * @property string|null $reason_text
+ * @property int $dead
  *
  * @property Category $category
  * @property User $createdUser
@@ -81,7 +82,7 @@ class Item extends \yii\db\ActiveRecord
             [['name', 'created_at', 'status_id', 'created_user_id', 'sum_need', 'sum_current'], 'required', 'message' => '{attribute} не может быть пустым'],
             [['description', 'appendText'], 'string'],
             [['created_at', 'updated_at', 'before_dt'], 'safe'],
-            [['status_id', 'category_id', 'created_user_id', 'reason_id'], 'integer'],
+            [['status_id', 'category_id', 'created_user_id', 'reason_id', 'dead'], 'integer'],
             [['sum_need', 'sum_current'], 'number'],
             [['name', 'currency'], 'string', 'max' => 45],
             [['reason_text'], 'string', 'max' => 255],
@@ -113,6 +114,7 @@ class Item extends \yii\db\ActiveRecord
             'reason_id' => 'Причина закрытия сбора',
             'reason_text' => 'Причина закрытия сбора  (текст)',
             'published' => 'Опубликован',
+            'dead' => 'Умер',
         ];
     }
 
@@ -161,9 +163,15 @@ class Item extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getImage()
+    public function getImages()
     {
         return $this->hasMany(Image::class, ['item_id' => 'id']);
+    }
+
+    /** Первое изображение сбора, если есть */
+    public function getFirstImage()
+    {
+        return $this->hasOne(Image::class, ['item_id' => 'id'])->orderBy('position')->one();
     }
 
     /**

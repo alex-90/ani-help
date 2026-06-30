@@ -15,8 +15,8 @@ use yii\bootstrap5\BootstrapPluginAsset;
 
 BootstrapPluginAsset::register($this);
 
-$this->title = 'My Items';
-$this->params['breadcrumbs'][] = $this->title;
+$this->title = 'Мои сборы';
+// $this->params['breadcrumbs'][] = $this->title;
 
 $reasonList = ArrayHelper::map(Reason::find()->orderBy('name')->all(), 'id', 'name');
 ?>
@@ -25,7 +25,7 @@ $reasonList = ArrayHelper::map(Reason::find()->orderBy('name')->all(), 'id', 'na
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?= Html::a('Create Item', ['create'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a('Создать сбор', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
 
 
@@ -178,6 +178,13 @@ $reasonList = ArrayHelper::map(Reason::find()->orderBy('name')->all(), 'id', 'na
                 </div>
                 <div class="invalid-feedback d-block" id="stop-reason-error" style="display:none!important;">
                     Укажите причину из списка или текстом.
+                </div>
+
+                <div class="form-check mt-3">
+                    <?= Html::checkbox('dead', false, ['class' => 'form-check-input', 'id' => 'stop-ritual']) ?>
+                    <label class="form-check-label" for="stop-ritual">
+                        Поставить ч/б изображение (животное погибло)
+                    </label>
                 </div>
             </div>
             <div class="modal-footer">

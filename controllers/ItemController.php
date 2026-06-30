@@ -190,16 +190,31 @@ class ItemController extends SecureController
             return $this->asJson(['error' => 'Файл не получен']);
         }
 
-        $remoteKey = 'uploads/' . uniqid('img_', true) . '.' . $file->extension;
-        $url = \Yii::$app->b2->uploadFile($file->tempName, $remoteKey);
+        $src = $this->createGdImage($file->tempName);
+        if ($src === null) {
+            return $this->asJson(['error' => 'Не удалось обработать изображение']);
+        }
 
-        if ($url === null) {
+        $base = 'uploads/' . uniqid('img_', true);
+
+        // оригинал + цветные и чёрно-белые производные размеры
+        $url      = \Yii::$app->b2->uploadFile($file->tempName, $base . '.' . $file->extension);
+        $urlBig   = $this->uploadGdImage($this->cropResize($src, 750, 400), $base . '_big.jpg');
+        $urlSm    = $this->uploadGdImage($this->cropResize($src, 256, 140), $base . '_sm.jpg');
+        $urlBigBw = $this->uploadGdImage($this->cropResize($src, 750, 400, true), $base . '_big_bw.jpg');
+        $urlSmBw  = $this->uploadGdImage($this->cropResize($src, 256, 140, true), $base . '_sm_bw.jpg');
+
+        if (in_array(null, [$url, $urlBig, $urlSm, $urlBigBw, $urlSmBw], true)) {
             return $this->asJson(['error' => 'Ошибка загрузки в хранилище']);
         }
 
         $image = new Image();
         $image->item_id = $model->id;
         $image->url = $url;
+        $image->url_big = $urlBig;
+        $image->url_sm = $urlSm;
+        $image->url_big_bw = $urlBigBw;
+        $image->url_sm_bw = $urlSmBw;
         $image->title = $file->baseName;
         $image->position = (int) Image::find()->where(['item_id' => $model->id])->max('position') + 1;
         $image->sensitive = 0;
@@ -213,6 +228,68 @@ class ItemController extends SecureController
             'url' => $url,
             'imageId' => $image->id,
         ]);
+    }
+
+    /**
+     * Создаёт GD-ресурс из загруженного файла (jpg/png/gif).
+     * @return \GdImage|null
+     */
+    private function createGdImage(string $path)
+    {
+        $info = @getimagesize($path);
+        if ($info === false) {
+            return null;
+        }
+
+        switch ($info[2]) {
+            case IMAGETYPE_JPEG: return @imagecreatefromjpeg($path) ?: null;
+            case IMAGETYPE_PNG:  return @imagecreatefrompng($path) ?: null;
+            case IMAGETYPE_GIF:  return @imagecreatefromgif($path) ?: null;
+        }
+
+        return null;
+    }
+
+    /**
+     * Масштабирует с обрезкой по центру до точных размеров (cover) и при необходимости делает ч/б.
+     * @param \GdImage $src
+     * @return \GdImage
+     */
+    private function cropResize($src, int $w, int $h, bool $grayscale = false)
+    {
+        $sw = imagesx($src);
+        $sh = imagesy($src);
+
+        $scale = max($w / $sw, $h / $sh);
+        $cropW = (int) round($w / $scale);
+        $cropH = (int) round($h / $scale);
+        $srcX  = (int) round(($sw - $cropW) / 2);
+        $srcY  = (int) round(($sh - $cropH) / 2);
+
+        $dst = imagecreatetruecolor($w, $h);
+        imagecopyresampled($dst, $src, 0, 0, $srcX, $srcY, $w, $h, $cropW, $cropH);
+
+        if ($grayscale) {
+            imagefilter($dst, IMG_FILTER_GRAYSCALE);
+        }
+
+        return $dst;
+    }
+
+    /**
+     * Сохраняет GD-ресурс во временный JPG и загружает в B2. GD-ресурс освобождается.
+     * @param \GdImage $img
+     * @return string|null
+     */
+    private function uploadGdImage($img, string $remoteKey): ?string
+    {
+        $tmp = tempnam(sys_get_temp_dir(), 'img') . '.jpg';
+        imagejpeg($img, $tmp, 85);
+
+        $url = \Yii::$app->b2->uploadFile($tmp, $remoteKey);
+        @unlink($tmp);
+
+        return $url;
     }
 
     public function actionDeleteImage($id)
@@ -260,6 +337,7 @@ class ItemController extends SecureController
         $model->status_id = ItemStatus::STATUS_CLOSED;
         $model->reason_id = $reasonId !== '' && $reasonId !== null ? (int) $reasonId : null;
         $model->reason_text = $reasonText !== '' ? $reasonText : null;
+        $model->dead = \Yii::$app->request->post('dead') ? 1 : 0;
         $model->save(false);
 
         return $this->redirect(\Yii::$app->request->referrer ?: ['own-items']);

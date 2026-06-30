@@ -133,6 +133,11 @@ class SiteController extends Controller
 
             return $this->refresh();
         }
+
+        // для залогиненного пользователя подставляем его email
+        if (!Yii::$app->user->isGuest) {
+            $model->email = Yii::$app->user->identity->email;
+        }
         return $this->render('contact', [
             'model' => $model,
         ]);
@@ -158,6 +163,7 @@ class SiteController extends Controller
 
         return $this->render('show', [
             'model' => $model,
+            'images' => $model->getImages()->orderBy('position')->all(),
         ]);
     }
 

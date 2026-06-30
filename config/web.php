@@ -17,6 +17,16 @@ $config = [
         '@npm'   => '@vendor/npm-asset',
     ],
     'components' => [
+        'view' => [
+            // Тема «Приют для животных»: тёплое дружелюбное оформление.
+            // Для view-файлов без тематической версии используется оригинал (fallback).
+            'theme' => [
+                'pathMap' => [
+                    '@app/views' => '@app/themes/animals',
+                ],
+                'baseUrl' => '@web/themes/animals',
+            ],
+        ],
         'request' => [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
             'cookieValidationKey' => 'dbVSPJTz4WUVArh1BVLQQPvQb5Otb8GQ',

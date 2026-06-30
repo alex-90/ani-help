@@ -1,0 +1,191 @@
+/* ============================================================
+   Тема «Приют для животных» — тёплое дружелюбное оформление
+   ============================================================ */
+
+:root {
+    --shelter-green: #4c9a4f;
+    --shelter-green-dark: #3c7d3f;
+    --shelter-orange: #f5933b;
+    --shelter-orange-dark: #e07e26;
+    --shelter-cream: #fff8ef;
+    --shelter-card: #ffffff;
+    --shelter-text: #4a3f35;
+    --shelter-border: #efe2d2;
+}
+
+body {
+    background-color: var(--shelter-cream);
+    color: var(--shelter-text);
+    background-image: radial-gradient(var(--shelter-border) 1px, transparent 1px);
+    background-size: 28px 28px;
+}
+
+/* ---- Шапка ---- */
+#header .navbar {
+    background: linear-gradient(90deg, var(--shelter-green), var(--shelter-green-dark)) !important;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, .12);
+}
+
+#header .navbar-brand {
+    padding-top: .15rem;
+    padding-bottom: .15rem;
+}
+
+/* круглый бейдж логотипа на зелёной шапке */
+#header .navbar {
+    min-height: 110px;
+}
+
+#header .shelter-logo {
+    height: 96px;
+    width: 96px;
+    border-radius: 50%;
+    background: #fff;
+    padding: 4px;
+    object-fit: cover;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, .2);
+}
+
+#header .navbar-dark .navbar-nav .nav-link {
+    color: rgba(255, 255, 255, .9);
+    font-weight: 500;
+}
+
+#header .navbar-dark .navbar-nav .nav-link {
+    border-radius: 0;
+    transition: background-color .15s ease-in-out;
+}
+
+#header .navbar-dark .navbar-nav .nav-link:hover {
+    color: #fff;
+    background-color: rgba(255, 255, 255, .18);
+}
+
+/* ---- Основной контент: всё в тёплых карточках ---- */
+#main {
+    padding-top: 7.5rem;
+    padding-bottom: 2rem;
+}
+
+.item-view,
+.item-form,
+.item-index,
+.site-about,
+.site-contact,
+.site-index .body-content,
+.site-show {
+    background: var(--shelter-card);
+    border: 1px solid var(--shelter-border);
+    border-radius: 1rem;
+    padding: 1.5rem 1.75rem;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, .05);
+    margin-bottom: 1.5rem;
+}
+
+h1, h2, h3 {
+    color: var(--shelter-green-dark);
+}
+
+h1::after {
+    content: " 🐾";
+    font-size: .6em;
+    vertical-align: middle;
+    opacity: .5;
+}
+
+/* ---- Кнопки ---- */
+.btn {
+    border-radius: 2rem;
+    font-weight: 500;
+}
+
+.btn-primary {
+    --bs-btn-bg: var(--shelter-green);
+    --bs-btn-border-color: var(--shelter-green);
+    --bs-btn-hover-bg: var(--shelter-green-dark);
+    --bs-btn-hover-border-color: var(--shelter-green-dark);
+    --bs-btn-active-bg: var(--shelter-green-dark);
+}
+
+.btn-success {
+    --bs-btn-bg: var(--shelter-orange);
+    --bs-btn-border-color: var(--shelter-orange);
+    --bs-btn-hover-bg: var(--shelter-orange-dark);
+    --bs-btn-hover-border-color: var(--shelter-orange-dark);
+}
+
+.btn-outline-primary {
+    --bs-btn-color: var(--shelter-green-dark);
+    --bs-btn-border-color: var(--shelter-green);
+    --bs-btn-hover-bg: var(--shelter-green);
+    --bs-btn-hover-border-color: var(--shelter-green);
+}
+
+/* ---- Таблицы (списки сборов) ---- */
+.table {
+    --bs-table-hover-bg: #f6fbf6;
+}
+
+.grid-view table thead th {
+    background: #f1f8f1;
+    color: var(--shelter-green-dark);
+    border-bottom: 2px solid var(--shelter-green);
+}
+
+/* ссылки-сортировки в заголовках столбцов */
+.grid-view table thead th a {
+    color: var(--shelter-green-dark);
+    text-decoration: none;
+}
+
+.grid-view table thead th a:hover {
+    color: var(--shelter-green);
+    text-decoration: underline;
+}
+
+/* обычные ссылки в таблицах сборов — зелёные (кнопки не трогаем) */
+.grid-view table tbody a:not(.btn) {
+    color: var(--shelter-green-dark);
+    font-weight: 500;
+    text-decoration: none;
+}
+
+.grid-view table tbody a:not(.btn):hover {
+    color: var(--shelter-green);
+    text-decoration: underline;
+}
+
+/* ---- Карусель / изображения на странице сбора ---- */
+.carousel img,
+.item-description img {
+    border-radius: .75rem;
+}
+
+/* индикаторы-кружочки с количеством фото */
+.carousel-indicators [data-bs-target] {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    background-color: rgba(255, 255, 255, .5);
+    opacity: 1;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, .35);
+}
+
+.carousel-indicators .active {
+    background-color: var(--shelter-orange);
+}
+
+/* ---- Подвал ---- */
+#footer {
+    background: #f1f8f1 !important;
+    border-top: 1px solid var(--shelter-border);
+}
+
+#footer::before {
+    content: "🐶  🐱  🐾  🐰  🐾";
+    display: block;
+    text-align: center;
+    opacity: .5;
+    margin-bottom: .35rem;
+}
