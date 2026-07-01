@@ -77,6 +77,29 @@ class LoadController extends Controller
         $user->save();
 
 
+        
+        $user = new User();
+        $user->name = 'diana';
+        $user->iin = '1234567891';
+        $user->phone = '+77077777771';
+        $user->email = 'diana@mail.ru';
+        // $user->role = 1;
+        $user->role_id = 1;
+        $user->inactive = 0;
+        $password = '123';
+        $hash = \Yii::$app->getSecurity()->generatePasswordHash($password);
+
+        $user->password = $hash;
+        // $user->auth_key = '';
+        $user->created_at = date('Y-m-d H:i:s');
+        $r = $user->validate();
+        
+        // var_dump($user->getErrors());exit;
+        // var_dump($r);exit;
+        
+        $user->save();
+
+
         $itemStatus = new ItemStatus();
         $itemStatus->name = 'Сбор открыт';
         $itemStatus->save();
