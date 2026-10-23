@@ -1,0 +1,34 @@
+name: deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-prod
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: SSH key
+        run: |
+          install -m 700 -d ~/.ssh
+          echo "${{ secrets.DEPLOY_SSH_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          echo "${{ secrets.DEPLOY_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
+
+      # Ключ на сервере ограничен command="/srv/web/bin/deploy-site anihelp",restrict —
+      # выполнится только деплой, команда в ssh игнорируется.
+      - name: Deploy
+        run: ssh -o BatchMode=yes deploy@${{ secrets.DEPLOY_HOST }} deploy
+
+      - name: Smoke test
+        run: |
+          sleep 2
+          code=$(curl -s -o /dev/null -w '%{http_code}' https://animals-help.alex-90.ru/)
+          echo "HTTP $code"
+          test "$code" = 200
