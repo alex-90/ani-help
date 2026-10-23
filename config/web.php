@@ -28,8 +28,8 @@ $config = [
             ],
         ],
         'request' => [
-            // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
-            'cookieValidationKey' => 'dbVSPJTz4WUVArh1BVLQQPvQb5Otb8GQ',
+            // ключ из окружения (COOKIE_VALIDATION_KEY); старый был в публичном репозитории
+            'cookieValidationKey' => $_ENV['COOKIE_VALIDATION_KEY'] ?? getenv('COOKIE_VALIDATION_KEY') ?: 'dev-only-insecure-key',
         ],
         'cache' => [
             'class' => 'yii\caching\FileCache',
@@ -65,8 +65,8 @@ $config = [
         'b2' => [
             'class'    => 'app\components\B2Storage',
 
-            'keyId'    => $_ENV['B2_KEY_ID'],
-            'appKey'   => $_ENV['B2_APP_KEY'],
+            'keyId'    => $_ENV['B2_KEY_ID'] ?? getenv('B2_KEY_ID') ?: '',
+            'appKey'   => $_ENV['B2_APP_KEY'] ?? getenv('B2_APP_KEY') ?: '',
 
             'endpoint' => 'https://s3.eu-central-003.backblazeb2.com',
             'region'   => 'eu-central-003',

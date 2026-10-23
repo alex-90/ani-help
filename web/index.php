@@ -1,14 +1,13 @@
 <?php
 
-// comment out the following two lines when deployed to production
-defined('YII_DEBUG') or define('YII_DEBUG', true);
-defined('YII_ENV') or define('YII_ENV', 'dev');
-
 require __DIR__ . '/../vendor/autoload.php';
 
-// Подключаем .env
-$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/..');
-$dotenv->load();
+// .env — для локальной разработки; на сервере переменные приходят из окружения контейнера.
+// safeLoad() не падает, если файла нет; уже заданные переменные окружения не перезаписываются.
+Dotenv\Dotenv::createImmutable(__DIR__ . '/..')->safeLoad();
+
+defined('YII_DEBUG') or define('YII_DEBUG', filter_var($_ENV['YII_DEBUG'] ?? getenv('YII_DEBUG') ?: false, FILTER_VALIDATE_BOOLEAN));
+defined('YII_ENV') or define('YII_ENV', $_ENV['YII_ENV'] ?? getenv('YII_ENV') ?: 'prod');
 
 require __DIR__ . '/../vendor/yiisoft/yii2/Yii.php';
 
